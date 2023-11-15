@@ -368,3 +368,7 @@ FodyWeavers.xsd
 /PW5/encrypted.txt
 /PW5/input.txt
 /PW5/key.txt
+/PW6/decrypted.txt
+/PW6/encrypted.txt
+/PW6/input.txt
+/PW6/key.txt
