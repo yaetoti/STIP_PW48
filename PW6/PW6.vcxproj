@@ -71,16 +71,16 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\yaetoti\Desktop\ПЗЗИ\Projects\STIP_PW48\ConsoleLib;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\yaetoti\Desktop\ПЗЗИ\Projects\STIP_PW48\ConsoleLib;C:\Users\yaetoti\Desktop\ПЗЗИ\Projects\STIP_PW48\Utils;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\Users\yaetoti\Desktop\ПЗЗИ\Projects\STIP_PW48\ConsoleLib;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\yaetoti\Desktop\ПЗЗИ\Projects\STIP_PW48\ConsoleLib;C:\Users\yaetoti\Desktop\ПЗЗИ\Projects\STIP_PW48\Utils;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\yaetoti\Desktop\ПЗЗИ\Projects\STIP_PW48\ConsoleLib;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\yaetoti\Desktop\ПЗЗИ\Projects\STIP_PW48\ConsoleLib;C:\Users\yaetoti\Desktop\ПЗЗИ\Projects\STIP_PW48\Utils;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Users\yaetoti\Desktop\ПЗЗИ\Projects\STIP_PW48\ConsoleLib;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\yaetoti\Desktop\ПЗЗИ\Projects\STIP_PW48\ConsoleLib;C:\Users\yaetoti\Desktop\ПЗЗИ\Projects\STIP_PW48\Utils;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -140,15 +140,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ConsoleLib\ConsoleLib.vcxproj">
       <Project>{025a1406-606d-4a21-9700-53cf7f4641bf}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Utils.h" />
+    <ProjectReference Include="..\Utils\Utils.vcxproj">
+      <Project>{cbce3325-c612-4535-bd7c-87967a8cb5b6}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

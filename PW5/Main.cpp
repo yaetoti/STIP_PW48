@@ -1,8 +1,7 @@
 #include <Windows.h>
 #include <Console.h>
+#include <Utils.h>
 #include <vector>
-
-#include "Utils.h"
 
 constexpr const wchar_t* kInputFile = L"input.txt";
 constexpr const wchar_t* kKeyFile = L"key.txt";
