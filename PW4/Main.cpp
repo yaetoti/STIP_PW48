@@ -16,13 +16,13 @@ const lzss_size MIN_MATCH_SIZE = 1;
 const uint8_t LITERAL_MARKER = 0;
 const uint8_t MATCH_MARKER = 1;
 
-inline void VecEmplaceInt(std::vector<uint8_t>& vec, lzss_size value) {
+inline void VecEmplaceValue(std::vector<uint8_t>& vec, lzss_size value) {
     for (size_t i = 0; i < sizeof(lzss_size); ++i) {
         vec.emplace_back((uint8_t)((value >> (8 * i)) & 0xFF));
     }
 }
 
-inline int VecGetInt(const std::vector<uint8_t>& vec, size_t index) {
+inline int VecGetValue(const std::vector<uint8_t>& vec, size_t index) {
     lzss_size result = 0;
     for (size_t i = 0; i < sizeof(lzss_size); ++i) {
         result |= (lzss_size)(vec[index + i]) << (8 * i);
@@ -54,10 +54,8 @@ std::vector<uint8_t> LzssEncode(const std::vector<uint8_t>& input) {
 
         if (matchLength >= MIN_MATCH_SIZE) {
             encoded.emplace_back(MATCH_MARKER);
-            VecEmplaceInt(encoded, matchIndex);
-            VecEmplaceInt(encoded, matchLength);
-            //encoded.emplace_back(matchIndex);
-            //encoded.emplace_back(matchLength);
+            VecEmplaceValue(encoded, matchIndex);
+            VecEmplaceValue(encoded, matchLength);
             index += matchLength;
         }
         else {
@@ -80,11 +78,9 @@ std::vector<uint8_t> LzssDecode(const std::vector<uint8_t>& encoded) {
             decoded.emplace_back(encoded[index++]);
         }
         else if (marker == MATCH_MARKER) {
-            //int matchIndex = encoded[index++];
-            //int matchLength = encoded[index++];
-            lzss_size matchIndex = VecGetInt(encoded, index);
+            lzss_size matchIndex = VecGetValue(encoded, index);
             index += sizeof(lzss_size);
-            lzss_size matchLength = VecGetInt(encoded, index);
+            lzss_size matchLength = VecGetValue(encoded, index);
             index += sizeof(lzss_size);
 
             for (lzss_size i = 0; i < matchLength; ++i) {
