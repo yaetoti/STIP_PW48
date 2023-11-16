@@ -118,9 +118,9 @@ private:
 };
 
 int WINAPI wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int) {
-	std::bitset<64> key(VecConvert<uint32_t, uint8_t>(ReadFile(kKeyFile))[0]);
+	std::bitset<64> key(ReadFile<uint32_t>(kKeyFile)[0]);
 	A5Encoder encoder(key);
-	std::vector<uint8_t> input = ReadFile(kInputFile);
+	std::vector<uint8_t> input = ReadFile<uint8_t>(kInputFile);
 	std::vector<uint8_t> encrypted = encoder.Encode(input);
 	WriteFile(kEncryptedFile, encrypted);
 	encoder.Reset();

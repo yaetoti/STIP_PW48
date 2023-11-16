@@ -155,8 +155,8 @@ std::vector<uint32_t> Decrypt(const std::vector<uint32_t>& data, const std::vect
 }
 
 int WINAPI wWinMain(HINSTANCE, HINSTANCE, LPWSTR, int) {
-    std::vector<uint32_t> input = VecConvert<uint32_t, uint8_t>(ReadFile(kInputFile));
-    std::vector<uint32_t> key = VecConvert<uint32_t, uint8_t>(ReadFile(kKeyFile));
+    std::vector<uint32_t> input = ReadFile<uint32_t>(kInputFile);
+    std::vector<uint32_t> key = ReadFile<uint32_t>(kKeyFile);
 
     // Encryption
     std::vector<uint32_t> encrypted = Encrypt(input, key);
