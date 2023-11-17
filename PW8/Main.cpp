@@ -44,17 +44,19 @@ void BmpHideMessage(const wchar_t* input, const wchar_t* output, const char* mes
 	auto infoHeader = reinterpret_cast<BMPInfoHeader*>(data.data() + sizeof(BMPFileHeader));
 	size_t alphabetSize = strlen(alphabet);
 	size_t colorsUsed = infoHeader->colorsUsed;
-	if (!strncmp("BM", fileHeader->signature, 2)
+	size_t messageLen = strlen(message);
+	if (strncmp("BM", fileHeader->signature, 2)
 		|| infoHeader->headerSize != 40
 		|| infoHeader->depth != 8
 		|| infoHeader->compression != 0
 		|| infoHeader->colorsUsed == 0
-		|| infoHeader->colorsUsed * alphabetSize > UINT8_MAX) { // > 256 in general, but one additional palette is used for \0
-		std::runtime_error("Format is not supported!");
+		|| infoHeader->colorsUsed * (alphabetSize + 1) > UINT8_MAX + 1 // > 256 in general, but one additional palette is used for \0
+		|| infoHeader->width * infoHeader->height < messageLen) {
+		throw std::runtime_error("Format is not supported!");
 	}
 
 	// Add space for new palette colors and update pointers
-	data.resize(data.size() + alphabetSize * infoHeader->colorsUsed * sizeof(uint32_t));
+	data.reserve(data.size() + alphabetSize * infoHeader->colorsUsed * sizeof(uint32_t));
 	fileHeader = reinterpret_cast<BMPFileHeader*>(data.data());
 	infoHeader = reinterpret_cast<BMPInfoHeader*>(data.data() + sizeof(BMPFileHeader));
 
@@ -74,12 +76,13 @@ void BmpHideMessage(const wchar_t* input, const wchar_t* output, const char* mes
 	// Hide message
 	auto rowBegin = data.begin() + fileHeader->offset;
 	auto iter = data.begin() + fileHeader->offset;
-	for (size_t i = 0; i < strlen(message); ++i) {
+	size_t padding = (infoHeader->width + sizeof(uint32_t) - 1) / sizeof(uint32_t) * sizeof(uint32_t) - infoHeader->width;
+	for (size_t i = 0; i < messageLen; ++i) {
 		*iter = *iter + colorsUsed * (uint8_t)(strchr(alphabet, message[i]) - alphabet + 1); // Index of the letter + 1
 		++iter;
 		// Program handles only 8-bit depth so that will go
 		if (iter - rowBegin >= infoHeader->width) {
-			iter += 2;
+			iter += padding;
 			rowBegin = iter;
 		}
 	}
@@ -98,20 +101,20 @@ std::string BmpReadMessage(const wchar_t* input, const char* alphabet) {
 	auto infoHeader = reinterpret_cast<BMPInfoHeader*>(data.data() + sizeof(BMPFileHeader));
 	size_t alphabetSize = strlen(alphabet);
 	size_t paletteSize = (infoHeader->colorsUsed - 1) / alphabetSize;
-	if (!strncmp("BM", fileHeader->signature, 2)
+	if (strncmp("BM", fileHeader->signature, 2)
 		|| infoHeader->headerSize != 40
 		|| infoHeader->depth != 8
 		|| infoHeader->compression != 0
 		|| infoHeader->colorsUsed == 0
-		|| infoHeader->colorsUsed * alphabetSize > UINT8_MAX) { // > 256 in general, but one additional palette is used for \0
-		std::runtime_error("Format is not supported!");
+		|| infoHeader->colorsUsed % (alphabetSize + 1) != 0) {
+		throw std::runtime_error("Format is not supported!");
 	}
 
 	// Get message
 	auto rowBegin = data.begin() + fileHeader->offset;
 	auto iter = data.begin() + fileHeader->offset;
+	size_t padding = (infoHeader->width + sizeof(uint32_t) - 1) / sizeof(uint32_t) * sizeof(uint32_t) - infoHeader->width;
 	std::string message;
-
 	while (iter - data.begin() < data.size()) {
 		// Decode till data is present
 		size_t paletteIndex = *iter / paletteSize;
@@ -123,7 +126,7 @@ std::string BmpReadMessage(const wchar_t* input, const char* alphabet) {
 		++iter;
 		// Program handles only 8-bit depth so that will go
 		if (iter - rowBegin >= infoHeader->width) {
-			iter += 2;
+			iter += padding;
 			rowBegin = iter;
 		}
 	}
